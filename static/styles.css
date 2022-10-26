@@ -1,0 +1,71 @@
+body {
+    justify-content: space-between;
+    font-family: 'Lato', sans-serif;
+}
+
+.title {
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: normal;
+}
+
+.file-drop-area {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 600px;
+    height: 200px;
+    max-width: 100%;
+    padding: 25px;
+    border: 1px dashed rgba(0, 0, 0, 0.7);
+    border-radius: 3px;
+    transition: 0.2s;
+}
+
+.choose-file-button {
+    flex-shrink: 0;
+    background-color: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+    padding: 8px 15px;
+    margin-right: 10px;
+    font-size: 12px;
+    text-transform: uppercase;
+}
+
+.file-message {
+    font-size: small;
+    font-weight: 300;
+    line-height: 1.4;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.file-input {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 100%;
+    cursor: pointer;
+    opacity: 0;
+}
+
+#ocrResult {
+    margin-left: auto;
+    margin-right: auto;
+    height: 400px;
+}
+
+.btn-font {
+    font-family: 'Lato', sans-serif;
+    font-weight: normal;
+}
+
+.content {
+    display:inline-block;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    max-width: 900px;
+}
