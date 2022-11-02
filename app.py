@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, flash
+from flask import Flask, render_template, request, flash, url_for
 from werkzeug.utils import secure_filename
 from datetime import datetime
 from ocr import *
@@ -21,6 +21,21 @@ def allowedFileExtension(filename):
     else:
         return False
 
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == "POST":
+        pass
+    else: 
+        return render_template('login.html')
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == "POST":
+        pass
+    else: 
+        return render_template('register.html')
+
+@app.route('/index')
 @app.route('/', methods=['GET', 'POST'])
 def index():
     if request.method == "POST":
@@ -51,7 +66,7 @@ def index():
         return render_template('index.html')
 
 @app.route("/history", methods=["GET"])
-def get():
+def history():
     results = mongo.get()
     resultsList = []
 

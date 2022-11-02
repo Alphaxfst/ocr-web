@@ -69,3 +69,12 @@ body {
     text-overflow: ellipsis;
     max-width: 900px;
 }
+
+
+#register-link {
+margin-top: -85px;
+}
+
+#login-link{
+    margin-top: -50px;
+}
