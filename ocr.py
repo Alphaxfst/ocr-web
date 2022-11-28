@@ -4,7 +4,7 @@ import os
 import cv2
 import re
 import numpy as np
-
+# tambahkan remark keterangan parameter Tesseract
 custom_config_pdf = r'--oem 3 --psm 6 -c preserve_interword_spaces=1'
 custom_config_image = r'--oem 3 --psm 1'
 UPLOAD_FOLDER = 'static/uploads/'

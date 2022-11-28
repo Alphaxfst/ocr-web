@@ -6,7 +6,7 @@ class Mongo():
         self.__creds = MongoClient(self.__connection)
         self.__document = self.__creds.db_ocr
         self.__ocrCollection = self.__document.ocr
-        self.__usersCollection = self.__document.ocr
+        self.__usersCollection = self.__document.users
     
     def loadDocument(self):
         return self.__document
@@ -37,8 +37,16 @@ class Mongo():
             return f"Error get users | {e}"
         return results
     
+    def getUsersByUsername(self, username):
+        try:
+            results = self.__usersCollection.find({'username': username})
+        except Exception as e:
+            return f"Error get users | {e}"
+        return results
+    
     def insertUser(self, userDict):
         try:
-            self.__usersCollection.insert_one(userDict)
+            result = self.__usersCollection.insert_one(userDict)
+            print(result)
         except Exception as e:
             return f"Error insert user | {e}"
