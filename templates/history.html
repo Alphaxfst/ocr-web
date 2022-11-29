@@ -18,7 +18,21 @@
                 </span>
             </i>
         </a>
+        <div class="ml-auto">
+            <a href="{{ url_for('index') }}" class="text-white mr-4">
+                Home
+            </a>
+            <a href="{{ url_for('history') }}" class="text-white mr-4">
+                History
+            </a>
+            <a href="{{ url_for('logout') }}" class="text-white mr-4">
+                Logout
+            </a>
+        </div>
     </nav>
+
+    <!-- # TODO:
+    # Bikin modal untuk detail file  -->
     
     <div class="container mb-5">
         {% for result in results %}

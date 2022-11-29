@@ -23,9 +23,9 @@ class Mongo():
         except Exception as e:
             return f"Error insert results | {e}"
 
-    def get(self):
+    def getByUsername(self, username):
         try:
-            results = self.__ocrCollection.find({})
+            results = self.__ocrCollection.find({'uploaded_by': username})
         except Exception as e:
             return f"Error get documents | {e}"
         return results
@@ -50,3 +50,6 @@ class Mongo():
             print(result)
         except Exception as e:
             return f"Error insert user | {e}"
+
+    def removeOCR(self):
+        self.__ocrCollection.drop()

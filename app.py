@@ -7,7 +7,8 @@ import os
 import hashlib
 
 ALLOWED_EXTENSIONS = ('png', 'jpg', 'jpeg', 'pdf')
-UPLOAD_FOLDER = 'static/uploads'
+# UPLOAD_FOLDER = 'static/uploads'
+UPLOAD_FOLDER = '../OCR_FILES/'
 
 app = Flask(__name__)
 app.secret_key = "alphafst"
@@ -55,7 +56,7 @@ def register():
     else: 
         return render_template('register.html')
 
-@app.route('/index')
+@app.route('/index', methods=['GET', 'POST'])
 @app.route('/', methods=['GET', 'POST'])
 def index():
     if 'user' in session:
@@ -77,7 +78,8 @@ def index():
                         'filesize': filesize, 
                         'filepath': filepath,
                         'ocrtimestamp': datetime.now().strftime("%m/%d/%Y, %H:%M:%S"),  
-                        'content': result
+                        'content': result,
+                        'uploaded_by': session['user']
                     }
                     mongo.insertOCRResult(resultDict)
                     return render_template('result.html', result=result)
@@ -93,7 +95,7 @@ def index():
 def history():
     if 'user' in session:
         mongo = Mongo()
-        results = mongo.get()
+        results = mongo.getByUsername(session['user'])
         resultsList = []
 
         for result in results:
