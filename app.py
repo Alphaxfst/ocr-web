@@ -104,6 +104,13 @@ def history():
     else:
         return redirect("/login")
 
+@app.route('/open_file', methods=['GET'])
+def openFile():
+    if 'user' in session:
+        pass
+    else:
+        return redirect("/login")
+
 @app.route("/logout", methods=["GET"])
 def logout():
     session.clear()
