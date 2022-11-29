@@ -1,11 +1,10 @@
-from flask import Flask, render_template, request, flash, url_for, session, redirect, send_from_directory
+from flask import Flask, render_template, request, flash, url_for, session, redirect, send_from_directory, send_file
 from werkzeug.utils import secure_filename
 from datetime import datetime
 from ocr import *
 from db import Mongo
 import os
 import hashlib
-import urllib
 
 ALLOWED_EXTENSIONS = ('png', 'jpg', 'jpeg', 'pdf')
 UPLOAD_FOLDER = '../OCR_FILES/'
@@ -120,7 +119,7 @@ def openFile():
     if 'user' in session:
         args = request.args
         filename = args.get('filename')
-        return send_from_directory(app.config['UPLOAD_FOLDER'], filename, as_attachment=True)
+        return send_from_directory(app.config['UPLOAD_FOLDER'], filename, as_attachment=False)
     else:
         return redirect("/login")
 
