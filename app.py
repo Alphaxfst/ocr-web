@@ -1,13 +1,13 @@
-from flask import Flask, render_template, request, flash, url_for, session, redirect
+from flask import Flask, render_template, request, flash, url_for, session, redirect, send_from_directory
 from werkzeug.utils import secure_filename
 from datetime import datetime
 from ocr import *
 from db import Mongo
 import os
 import hashlib
+import urllib
 
 ALLOWED_EXTENSIONS = ('png', 'jpg', 'jpeg', 'pdf')
-# UPLOAD_FOLDER = 'static/uploads'
 UPLOAD_FOLDER = '../OCR_FILES/'
 
 app = Flask(__name__)
@@ -31,10 +31,16 @@ def login():
 
         mongo = Mongo()
         user = mongo.getUsersByUsername(formData['username'])
-        if hashed_password.hexdigest() == user[0]['password']:
-            session['user'] = formData['username']
-            return redirect("/index")
+        user = list(user)
+        if len(user) != 0:
+            if user[0]['password'] == hashed_password.hexdigest():
+                session['user'] = formData['username']
+                return redirect("/index")
+            else:
+                flash("Invalid password!")
+                return render_template('login.html')
         else:
+            flash("Invalid username!")
             return render_template('login.html')
     else: 
         return render_template('login.html')
@@ -47,12 +53,17 @@ def register():
         email = formData['email']
         password = formData['password']
         hashed_password = hashlib.md5(password.encode())
-
         mongo = Mongo()
-        userDict = {'username': username, 'email': email, 'password': hashed_password.hexdigest()}
-        result = mongo.insertUser(userDict)
-        print(result)
-        return redirect("/index")
+
+        userDb = mongo.getUsersByUsername(formData['username'])
+        if len(list(userDb)) != 0:
+            error = "Username already used, please choose other username"
+            return render_template('register.html', error=error)
+        else:
+            userDict = {'username': username, 'email': email, 'password': hashed_password.hexdigest()}
+            mongo.insertUser(userDict)
+            flash("User registration success!")
+            return redirect("/index")
     else: 
         return render_template('register.html')
 
@@ -107,7 +118,9 @@ def history():
 @app.route('/open_file', methods=['GET'])
 def openFile():
     if 'user' in session:
-        pass
+        args = request.args
+        filename = args.get('filename')
+        return send_from_directory(app.config['UPLOAD_FOLDER'], filename, as_attachment=True)
     else:
         return redirect("/login")
 
