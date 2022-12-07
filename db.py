@@ -2,7 +2,7 @@ from pymongo import MongoClient
 
 class Mongo():
     def __init__(self):
-        self.__connection = "mongodb://localhost:27017/"
+        self.__connection = "mongodb+srv://admin:IBV5Z7h21uKDYjqW@ocrweb.qwtraxg.mongodb.net/?retryWrites=true&w=majority"
         self.__creds = MongoClient(self.__connection)
         self.__document = self.__creds.db_ocr
         self.__ocrCollection = self.__document.ocr
