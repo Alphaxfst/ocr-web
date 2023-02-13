@@ -8,11 +8,13 @@ import hashlib
 import logging
 
 ALLOWED_EXTENSIONS = ('png', 'jpg', 'jpeg', 'pdf')
-UPLOAD_FOLDER = '../OCR_FILES/'
+UPLOAD_FOLDER = 'OCR_FILES'
+path = os.getcwd()
+parrentDir = os.path.dirname(path)
 
 app = Flask(__name__)
 app.secret_key = "alphafst"
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['UPLOAD_FOLDER'] = os.path.join(parrentDir, UPLOAD_FOLDER)
 
 
 def allowedFileExtension(filename):
@@ -77,26 +79,25 @@ def index():
             if file.filename == '':
                 flash("No selected file")
                 return render_template('index.html')
-            if file:
-                if allowedFileExtension(file.filename):
-                    filename = secure_filename(file.filename)
-                    filepath = f"{app.config['UPLOAD_FOLDER']}/{filename}"
-                    file.save(filepath)
-                    filesize = os.stat(filepath).st_size
-                    result = ocr(filename)
-                    resultDict = {
-                        'filename': filename, 
-                        'filesize': filesize, 
-                        'filepath': filepath,
-                        'ocrtimestamp': datetime.now().strftime("%m/%d/%Y, %H:%M:%S"),  
-                        'content': result,
-                        'uploaded_by': session['user']
-                    }
-                    mongo.insertOCRResult(resultDict)
-                    return render_template('result.html', result=result)
-                else:
-                    flash("File type not supported")
-                    return render_template('index.html')
+            if file and allowedFileExtension(file.filename):
+                filename = secure_filename(file.filename)
+                filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                file.save(filepath)
+                filesize = os.stat(filepath).st_size
+                result = ocr(filename)
+                resultDict = {
+                    'filename': filename, 
+                    'filesize': filesize, 
+                    'filepath': filepath,
+                    'ocrtimestamp': datetime.now().strftime("%m/%d/%Y, %H:%M:%S"),  
+                    'content': result,
+                    'uploaded_by': session['user']
+                }
+                mongo.insertOCRResult(resultDict)
+                return render_template('result.html', result=result)
+            else:
+                flash("File type not supported")
+                return render_template('index.html')
         else:
             return render_template('index.html')
     else:

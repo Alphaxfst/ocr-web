@@ -9,8 +9,11 @@ import numpy as np
 custom_config_pdf = r'--oem 3 --psm 6 -c preserve_interword_spaces=1'
 custom_config_image = r'--oem 3 --psm 1'
 
-UPLOAD_FOLDER = '../OCR_FILES/'
-TEMP_DIR = 'temp/'
+
+path = os.getcwd()
+parrentDir = os.path.dirname(path)
+UPLOAD_FOLDER = os.path.join(parrentDir, 'OCR_FILES')
+TEMP_DIR = os.path.join(UPLOAD_FOLDER, 'temp')
 
 pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
 
