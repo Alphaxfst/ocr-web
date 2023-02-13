@@ -5,6 +5,7 @@ from ocr import *
 from db import Mongo
 import os
 import hashlib
+import logging
 
 ALLOWED_EXTENSIONS = ('png', 'jpg', 'jpeg', 'pdf')
 UPLOAD_FOLDER = '../OCR_FILES/'
@@ -130,4 +131,6 @@ def logout():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    logging.basicConfig(level=logging.INFO)
+
+    app.run(host='0.0.0.0', port=5000, debug=True)

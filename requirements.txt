@@ -1,3 +1,4 @@
+google-cloud-logging
 Flask==2.2.2
 numpy==1.21.6
 opencv-python==4.6.0.66
