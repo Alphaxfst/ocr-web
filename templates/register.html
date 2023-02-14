@@ -20,11 +20,15 @@
             <div class="container">
                 <div class="card mx-auto w-50 p-5 mt-2">
                     <div class="card-content">
-                        {% if error %}
-                            <div class="alert alert-warning" role="alert">
-                                <p class="text-center"><strong>Error: </strong> {{error}}</p> 
-                            </div>
-                        {% endif %}
+                        {% with messages = get_flashed_messages(with_categories=true) %}
+                            {% if messages %}
+                                {% for cat, msg in messages %}
+                                    <div class="alert alert-{{cat}}" role="alert">
+                                        <p class="text-center">{{msg}}</p> 
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+                        {% endwith %}
                         <form id="register-form" class="form" action="" method="post">
                             <h3 class="text-center">Register</h3>
                             <div class="form-group">

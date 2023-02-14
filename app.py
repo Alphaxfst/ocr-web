@@ -35,10 +35,10 @@ def login():
                 session['user'] = formData['username']
                 return redirect("/index")
             else:
-                flash("Invalid password!", "danger")
+                flash(message="Invalid password!", category="danger")
                 return render_template('login.html')
         else:
-            flash("Invalid username!", "danger")
+            flash(message="Invalid username!", category="danger")
             return render_template('login.html')
     else: 
         return render_template('login.html')
@@ -57,12 +57,12 @@ def register():
 
         userDb = mongo.getUsersByUsername(formData['username'])
         if len(list(userDb)) != 0:
-            error = "Username already used, please choose other username"
-            return render_template('register.html', error=error)
+            flash(message="Username already used, please choose other username", category="danger")
+            return render_template('register.html')
         else:
             userDict = {'username': username, 'email': email, 'password': hashed_password.hexdigest()}
             mongo.insertUser(userDict)
-            flash("User registration success!", "success")
+            flash(message="User registration success!", category="success")
             return redirect("/index")
     else: 
         return render_template('register.html')

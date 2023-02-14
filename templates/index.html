@@ -43,14 +43,17 @@
                                 <span class="file-message">or drag and drop files here</span>
                                 <input class="file-input" type="file" name="file">
                             </div>
-                            <input type="submit" value="Upload" class="btn btn-success mt-4">
-                            {% with messages = get_flashed_messages() %}
-                                {% if messages %}
-                                    {% for msg in messages %}
-                                        <p style="color: red; font-size: smaller;" class="mt-2">{{msg}}</p>
-                                    {% endfor %}
-                                {% endif %}
+                            {% with messages = get_flashed_messages(with_categories=true) %}
+                            {% if messages %}
+                                {% for cat, msg in messages %}
+                                    <div class="alert alert-{{ cat }} mt-4 py-2" role="alert">
+                                        <p class="text-center">{{msg}}</p> 
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
                             {% endwith %}
+
+                            <input type="submit" value="Upload" class="btn btn-success mt-4">
                         </form>
                     </div>
                 </div>
