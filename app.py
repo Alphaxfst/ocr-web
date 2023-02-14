@@ -1,28 +1,24 @@
 from flask import Flask, render_template, request, flash, url_for, session, redirect, send_from_directory, send_file
 from werkzeug.utils import secure_filename
 from datetime import datetime
-from ocr import *
+from ocr import scan
 from db import Mongo
 import os
 import hashlib
-import logging
+
+parrentDir = os.path.dirname(os.getcwd())
 
 ALLOWED_EXTENSIONS = ('png', 'jpg', 'jpeg', 'pdf')
-UPLOAD_FOLDER = 'OCR_FILES'
-path = os.getcwd()
-parrentDir = os.path.dirname(path)
+UPLOAD_DIR = os.path.join(parrentDir, 'OCR_FILES')
 
 app = Flask(__name__)
 app.secret_key = "alphafst"
-app.config['UPLOAD_FOLDER'] = os.path.join(parrentDir, UPLOAD_FOLDER)
 
 
 def allowedFileExtension(filename):
     fileExt = filename.split(".")[1].lower()
-    if fileExt in ALLOWED_EXTENSIONS:
-        return True
-    else:
-        return False
+    return True if fileExt in ALLOWED_EXTENSIONS else False
+
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -39,23 +35,25 @@ def login():
                 session['user'] = formData['username']
                 return redirect("/index")
             else:
-                flash("Invalid password!")
+                flash("Invalid password!", "danger")
                 return render_template('login.html')
         else:
-            flash("Invalid username!")
+            flash("Invalid username!", "danger")
             return render_template('login.html')
     else: 
         return render_template('login.html')
 
+
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == "POST":
+        mongo = Mongo()
+
         formData = request.form
         username = formData['username']
         email = formData['email']
         password = formData['password']
         hashed_password = hashlib.md5(password.encode())
-        mongo = Mongo()
 
         userDb = mongo.getUsersByUsername(formData['username'])
         if len(list(userDb)) != 0:
@@ -64,10 +62,11 @@ def register():
         else:
             userDict = {'username': username, 'email': email, 'password': hashed_password.hexdigest()}
             mongo.insertUser(userDict)
-            flash("User registration success!")
+            flash("User registration success!", "success")
             return redirect("/index")
     else: 
         return render_template('register.html')
+
 
 @app.route('/index', methods=['GET', 'POST'])
 @app.route('/', methods=['GET', 'POST'])
@@ -77,14 +76,14 @@ def index():
             mongo = Mongo()
             file = request.files['file']
             if file.filename == '':
-                flash("No selected file")
+                flash(message="No selected file", category="warning")
                 return render_template('index.html')
             if file and allowedFileExtension(file.filename):
                 filename = secure_filename(file.filename)
-                filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                filepath = os.path.join(UPLOAD_DIR, filename)
                 file.save(filepath)
                 filesize = os.stat(filepath).st_size
-                result = ocr(filename)
+                result = scan(filename, UPLOAD_DIR)
                 resultDict = {
                     'filename': filename, 
                     'filesize': filesize, 
@@ -96,12 +95,13 @@ def index():
                 mongo.insertOCRResult(resultDict)
                 return render_template('result.html', result=result)
             else:
-                flash("File type not supported")
+                flash(message="File type not supported", category="danger")
                 return render_template('index.html')
         else:
             return render_template('index.html')
     else:
         return redirect("/login")
+
 
 @app.route("/history", methods=["GET"])
 def history():
@@ -116,14 +116,16 @@ def history():
     else:
         return redirect("/login")
 
+
 @app.route('/open_file', methods=['GET'])
 def openFile():
     if 'user' in session:
         args = request.args
         filename = args.get('filename')
-        return send_from_directory(app.config['UPLOAD_FOLDER'], filename, as_attachment=False)
+        return send_from_directory(UPLOAD_DIR, filename, as_attachment=False)
     else:
         return redirect("/login")
+
 
 @app.route("/logout", methods=["GET"])
 def logout():
@@ -132,6 +134,4 @@ def logout():
 
 
 if __name__ == '__main__':
-    logging.basicConfig(level=logging.INFO)
-
     app.run(host='0.0.0.0', port=5000, debug=True)
